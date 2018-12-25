@@ -3,9 +3,9 @@ This is a small project that I undertook to become learn & experiment with pytho
 
 ## Build notes
 * Requires python3
-* Requires selenium[https://selenium-python.readthedocs.io/]
+* Requires [selenium](https://selenium-python.readthedocs.io/)
   * pip3 install selenium
-* Must have firefox & geckodriver[https://github.com/mozilla/geckodriver/releases] in $PATH folder for selenium to work
+* Must have firefox & [geckodriver](https://github.com/mozilla/geckodriver/releases) in $PATH folder for selenium to work
 
 ## Running
 ```bash
