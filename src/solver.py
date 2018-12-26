@@ -41,11 +41,14 @@ def compute_board_options(board):
 
 # solves sudoku puzzle
 # board: 9x9 2D list representing board - unknown = 0
+# log_file: log file for printing process details
 # returns True if success or False if board is unsolvable
-def solve(board):
+def solve(board, log_file=None):
     options = compute_board_options(board)  # compute options
 
     if not options:
+        if log_file:
+            log_file.write("invalid board layout" + '\n')
         return False  # one of cells contains an invalid choice - unsolvable
 
     for r, row in enumerate(board):
@@ -54,11 +57,19 @@ def solve(board):
                 while options[r][c]:  # try all possibilities
                     board[r][c] = options[r][c].pop()
 
-                    if solve(board):
+                    if log_file:
+                        log_file.write("trying " + str(board[r][c]) + " at pos: " + str(r) + ',' + str(c) + '\n')
+
+                    if solve(board, log_file):
                         return True  # found correct decision. Board is solved
                     else:
+                        if log_file:
+                            log_file.write("invalid choice at pos: " + str(r) + ',' + str(c) + " now backtracking" + '\n')
                         board[r][c] = 0  # undo decision and move onto to next one
 
                 return False  # no valid decision can be made - puzzle is unsolvable
+
+    if log_file:
+        log_file.write('solution found: ' + str(board) + '\n')
 
     return True  # everything is solved and correct

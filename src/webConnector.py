@@ -38,7 +38,6 @@ def post_solution(browser, solution):
             ActionChains(browser).send_keys(str(solution[int(i / 9)][i % 9])).perform()  # post solution
 
 
-
 # closes selenium web driver
 def close_browser(browser):
     browser.close()
