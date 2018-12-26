@@ -3,64 +3,62 @@
 
 # computes list of options available for a given board
 # board: 9x9 2D list representing board - unknown = 0
-# returns 2D list containing the available options as a set
-# returns empty list if it finds location with an invalid decision
+# returns 2D list containing the available options as sets
+# returns empty list if it finds location with an invalid decision and there are no valid options
 def compute_board_options(board):
     options = list()  # holds options
 
-    for row in range(len(board)):
+    for r, row in enumerate(board):
         options.append(list())
 
-        for col in range(len(board[row])):
+        for c, val in enumerate(row):
             used_values = set()  # set to hold value that cannot be used at a given position
 
             # add values in same row
-            for c in range(len(board[row])):
-                if c != col and board[row][c]:
-                    used_values.add(board[row][c])
+            for c_temp, val_temp in enumerate(row):
+                if c_temp != c and val_temp:
+                    used_values.add(val_temp)
 
             # add values in same column
-            for r in range(len(board)):
-                if r != row and board[r][col]:
-                    used_values.add(board[r][col])
+            for r_temp, row_temp in enumerate(board):
+                if r_temp != r and row_temp[c]:
+                    used_values.add(row_temp[c])
 
             # add values in same 3x3 grid cell
-            r_start, c_start = int(row / 3) * 3, int(col / 3) * 3
-            for r in range(r_start, r_start + 3):
-                for c in range(c_start, c_start + 3):
-                    if r != row and c != col and board[r][c]:
-                        used_values.add(board[r][c])
+            r_start, c_start = int(r / 3) * 3, int(c / 3) * 3
+            for r_temp in range(r_start, r_start + 3):
+                for c_temp in range(c_start, c_start + 3):
+                    if r_temp != r and c_temp != c and board[r_temp][c_temp]:
+                        used_values.add(board[r_temp][c_temp])
 
-            if board[row][col] not in used_values:
-                options[-1].append({1, 2, 3, 4, 5, 6, 7, 8, 9} - used_values)  # add only the possible values
-            else:
-                return list()  # indicated invalid board - value in cell is not valid
+            options[-1].append({1, 2, 3, 4, 5, 6, 7, 8, 9} - used_values)  # add possible values
+
+            if (board[r][c] and board[r][c] not in options[-1][-1]) or (not board[r][c] and not len(options[-1][-1])):
+                return list()  # found invalid choice or not valid options. indicate invalid board
 
     return options
 
 
 # solves sudoku puzzle
 # board: 9x9 2D list representing board - unknown = 0
-# returns solved board or empty list if there is no solution
+# returns True if success or False if board is unsolvable
 def solve(board):
-    board_solved = board.copy()
-    options = compute_board_options(board_solved)  # compute options
+    options = compute_board_options(board)  # compute options
 
     if not options:
-        return list()  # one of cells contains an invalid choice
+        return False  # one of cells contains an invalid choice - unsolvable
 
-    for r in range(len(board_solved)):
-        for c in range(len(board_solved)):
+    for r, row in enumerate(board):
+        for c in range(len(row)):
             if not board[r][c]:  # no decision has been made
                 while options[r][c]:  # try all possibilities
-                    board_solved[r][c] = options[r][c].pop()
-                    temp_solution = solve(board_solved)
+                    board[r][c] = options[r][c].pop()
 
-                    if temp_solution:  # found correct decision
-                        return temp_solution
-                    else:  # undo decision and move onto to next one
-                        board_solved[r][c] = 0
+                    if solve(board):
+                        return True  # found correct decision. Board is solved
+                    else:
+                        board[r][c] = 0  # undo decision and move onto to next one
 
-                return list()  # no valid decision can be made - puzzle is unsolvable
+                return False  # no valid decision can be made - puzzle is unsolvable
 
-    return board_solved  # everything is solved and correct
+    return True  # everything is solved and correct

@@ -15,9 +15,10 @@ puzzle_board = [[5, 3, 0, 0, 7, 0, 0, 0, 0],
 
 start_time = time.time()
 
-puzzle_solved = solver.solve(puzzle_board)
+is_solved = solver.solve(puzzle_board)
 
 end_time = time.time()
 print("Elapsed time for my solver: %g seconds" % (end_time - start_time))
-print(puzzle_solved)
+print("Puzzle solved:", is_solved)
+print(puzzle_board)
 
