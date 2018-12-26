@@ -1,24 +1,39 @@
 import solver
+import webConnector
+
 import time
 
+print("Connecting to livesudoku website")
 
-puzzle_board = [[5, 3, 0, 0, 7, 0, 0, 0, 0],
-                [6, 0, 0, 1, 9, 5, 0, 0, 0],
-                [0, 9, 8, 0, 0, 0, 0, 6, 0],
-                [8, 0, 0, 0, 6, 0, 0, 0, 3],
-                [4, 0, 0, 8, 0, 3, 0, 0, 1],
-                [7, 0, 0, 0, 2, 0, 0, 0, 6],
-                [0, 6, 0, 0, 0, 0, 2, 8, 0],
-                [0, 0, 0, 4, 1, 9, 0, 0, 5],
-                [0, 0, 0, 0, 8, 0, 0, 7, 9]]
+browser = webConnector.create_browser()  # open website
 
+print("Connected! Now getting puzzle")
 
+puzzle = webConnector.get_puzzle(browser)  # get puzzle
+
+print("Got Puzzle!")
+print("Now solving the puzzle:", puzzle)
+
+# solve puzzle and time
 start_time = time.time()
-
-is_solved = solver.solve(puzzle_board)
-
+is_solved = solver.solve(puzzle)
 end_time = time.time()
-print("Elapsed time for my solver: %g seconds" % (end_time - start_time))
-print("Puzzle solved:", is_solved)
-print(puzzle_board)
 
+print("Elapsed time for my solver: %g seconds" % (end_time - start_time))
+
+if is_solved:
+    print("Puzzle solved:", puzzle)
+
+    print("Now uploading solution")
+    webConnector.post_solution(browser, puzzle)
+
+    print("Solution uploaded!")
+
+    print("Solution submitted!")
+
+else:
+    print("Puzzle could not be solved. Does not have a solution")
+
+time.sleep(10)
+print("Now closing browser!")
+webConnector.close_browser(browser)
